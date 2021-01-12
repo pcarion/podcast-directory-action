@@ -1,0 +1,22 @@
+name: "Issue to add a podcast"
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  issue_add_podcast:
+    runs-on: ubuntu-latest
+    steps:
+      - run: env
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - uses: actions/checkout@v2
+        with:
+          ref: setup
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
+      - run: node dist/index.js
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
