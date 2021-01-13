@@ -8,3 +8,11 @@ export interface RepoInformation {
   defaultBranch: string;
   description: string | null;
 }
+
+export interface FileInformation {
+  name: string;
+  path: string;
+  destPath: string;
+  download_url: string;
+  content?: string;
+}
