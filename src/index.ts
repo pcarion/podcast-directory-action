@@ -49,7 +49,7 @@ async function run() {
 
     switch (context.eventName) {
       case 'issues':
-        await handleIssuesEvent(octokit, info);
+        await handleIssuesEvent(octokit, info, podcastDirectory);
     }
 
     core.setOutput('title', time);

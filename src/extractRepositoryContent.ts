@@ -58,11 +58,12 @@ async function extractFilesFromRepositoryContent(
 export default async function extractRepositoryContent(
   octo: Octokit,
   info: RepoInformation,
+  rootDirectory: string,
 ): Promise<FileInformation[]> {
   console.log('Extracting repository content', { info });
   const listOfFiles: FileInformation[] = [];
 
-  await extractFilesFromRepositoryContent(octo, listOfFiles, info, '', '');
+  await extractFilesFromRepositoryContent(octo, listOfFiles, info, rootDirectory, '');
   // await dowloadFiles(listOfFiles);
 
   console.log('>extractRepositoryContent>Done');
