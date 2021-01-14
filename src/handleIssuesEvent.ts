@@ -20,6 +20,7 @@ export default async function handleIssuesEvent(
   const urlCandidate = title.trim();
   try {
     const result = await processUrl(urlCandidate, issueNumber);
+    console.log('processUrl result:'), console.log(result);
 
     // used by commit acction
     // https://github.com/marketplace/actions/add-commit
