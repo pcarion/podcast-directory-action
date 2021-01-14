@@ -47,6 +47,9 @@ async function run() {
     const info = await getRepositoryInformation(octokit, repo.owner, repo.repo);
     console.log('@@@ info:', info);
 
+    const payload = JSON.stringify(context.payload, undefined, 2);
+    console.log(`The event payload: ${payload}`);
+
     switch (context.eventName) {
       case 'issues':
         await handleIssuesEvent(octokit, info, podcastDirectory);
@@ -56,8 +59,6 @@ async function run() {
     core.setOutput('filename', podcastDirectory);
     core.setOutput('rss', time);
     // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(context.payload, undefined, 2);
-    console.log(`The event payload: ${payload}`);
   } catch (error) {
     core.setFailed(error.message);
   }

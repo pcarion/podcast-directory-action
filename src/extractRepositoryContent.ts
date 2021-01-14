@@ -12,7 +12,7 @@ async function downloadFile(file: FileInformation): Promise<void> {
   file.content = response.data;
 }
 
-async function dowloadFiles(listOfFiles: FileInformation[]) {
+export async function dowloadFiles(listOfFiles: FileInformation[]): Promise<void> {
   for (const file of listOfFiles) {
     await downloadFile(file);
   }
