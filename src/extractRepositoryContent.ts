@@ -9,6 +9,7 @@ async function downloadFile(file: FileInformation): Promise<void> {
     method: 'GET',
     responseType: 'text',
   });
+  console.log(`@@@ content of ${file.name}:${response.data}`);
   file.content = response.data;
 }
 
