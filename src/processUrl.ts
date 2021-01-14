@@ -1,6 +1,6 @@
 import checkUrl from './checkUrl';
 
-import { Feed } from './jtd/podcast';
+import { Podcast, Feed } from './jtd/podcast';
 import { emptyFeed } from './empty';
 
 import processPodcastFeed from './processPodcastFeed';
@@ -61,8 +61,7 @@ async function checkInputUrl(input: string): Promise<CheckInputUrlResult> {
 }
 
 interface ProcessUrlResult {
-  title: string;
-  rss: string;
+  podcast: Podcast;
   fileName: string;
   lines: string[];
 }
@@ -88,9 +87,8 @@ export default async function processUrl(urlCandidate: string, issueNumber: numb
     if (feed) {
       const [podcast, fileName, lines] = await processPodcastFeed(feed, issueNumber);
       return {
-        title: podcast.title,
-        rss: podcast.feed.rss,
-        fileName: fileName,
+        podcast,
+        fileName,
         lines,
       };
     } else {

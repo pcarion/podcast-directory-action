@@ -1,13 +1,41 @@
-import { Octokit, RepoInformation, FileInformation } from './types';
+import { Octokit, RepoInformation } from './types';
 import extractRepositoryContent, { dowloadFiles } from './extractRepositoryContent';
 import validatePodcastYaml from './validatePodcastYaml';
 import processUrl from './processUrl';
+import { Podcast, Feed } from './jtd/podcast';
 
 export interface HandleIssueResponse {
   candidateUrl: string;
   isSuccess: boolean;
   errorMessage?: string;
-  podcastTitle?: string;
+  podcast?: Podcast;
+  fileName?: string;
+}
+
+function checkIfDuplicatePodcast(feed1: Feed, feed2: Feed): boolean {
+  function cmpUrl(url1: string, url2: string): boolean {
+    if (url1.trim() === '_') {
+      return false;
+    }
+    if (url2.trim() === '_') {
+      return false;
+    }
+    return url1.trim().toLowerCase() === url2.trim().toLowerCase();
+  }
+
+  if (cmpUrl(feed1.rss, feed2.rss)) {
+    return true;
+  }
+  if (cmpUrl(feed1.itunes, feed2.itunes)) {
+    return true;
+  }
+  if (cmpUrl(feed1.spotify, feed2.spotify)) {
+    return true;
+  }
+  if (cmpUrl(feed1.google, feed2.google)) {
+    return true;
+  }
+  return false;
 }
 
 export default async function handleIssuesEvent(
@@ -19,21 +47,18 @@ export default async function handleIssuesEvent(
 ): Promise<HandleIssueResponse> {
   const urlCandidate = title.trim();
   try {
+    // process the URL to get associated podcast
     const result = await processUrl(urlCandidate, issueNumber);
-    console.log('processUrl result:'), console.log(result);
+    console.log(result.podcast);
 
-    // used by commit acction
-    // https://github.com/marketplace/actions/add-commit
-    const message = `new podcast: ${result.title} (${result.rss})`;
-    console.log(message);
-
+    // before we can add this podcast, we need to check that this is not a duplicate
     const files = await extractRepositoryContent(octokit, repoInformation, podcastsDirectory);
 
     // filter to get only yaml files and download their content
     const podcastFiles = files.filter((f) => f.name.endsWith('.yaml'));
     await dowloadFiles(podcastFiles);
 
-    console.log('Files are:', files);
+    console.log('podcast files are:', files);
 
     for (const file of podcastFiles) {
       if (!file.content) {
@@ -42,12 +67,17 @@ export default async function handleIssuesEvent(
       const podcast = validatePodcastYaml(file.content);
       console.log(file.name);
       console.log(podcast);
+      if (checkIfDuplicatePodcast(podcast.feed, result.podcast.feed)) {
+        console.log('Podcast already added:', podcast);
+        throw new Error(`podcast already added: ${podcast.title}`);
+      }
     }
     return {
       candidateUrl: urlCandidate,
       isSuccess: true,
       errorMessage: '',
-      podcastTitle: result.title,
+      podcast: result.podcast,
+      fileName: result.fileName,
     };
   } catch (err) {
     return {

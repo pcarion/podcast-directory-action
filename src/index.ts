@@ -75,8 +75,12 @@ async function run() {
           core.setFailed(result.errorMessage || 'internal error');
           break;
         }
-        core.setOutput('title', result.podcastTitle);
-        core.setOutput('filename', 'tbc');
+        if (!result.podcast) {
+          core.setFailed('internal error -- missing podcast information');
+          break;
+        }
+        core.setOutput('title', result.podcast.title);
+        core.setOutput('filename', result.fileName);
     }
 
     core.setOutput('title', time);
