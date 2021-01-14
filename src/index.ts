@@ -52,7 +52,23 @@ async function run() {
 
     switch (context.eventName) {
       case 'issues':
-        await handleIssuesEvent(octokit, info, podcastDirectory);
+        if (!context.payload.issue) {
+          core.setFailed('no issue payload');
+          break;
+        }
+
+        const issueNumber = context.payload.issue.number;
+        if (!issueNumber) {
+          core.setFailed('no issueNumber for the issue');
+          break;
+        }
+        const title = context.payload.issue.title as string;
+        if (!title) {
+          core.setFailed('no title for the issue');
+          break;
+        }
+
+        await handleIssuesEvent(octokit, info, podcastDirectory, issueNumber, title);
     }
 
     core.setOutput('title', time);
