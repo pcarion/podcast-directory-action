@@ -68,7 +68,15 @@ async function run() {
           break;
         }
 
-        await handleIssuesEvent(octokit, info, podcastDirectory, issueNumber, title);
+        const result = await handleIssuesEvent(octokit, info, podcastDirectory, issueNumber, title);
+        console.log('Result:');
+        console.log(result);
+        if (!result.isSuccess) {
+          core.setFailed(result.errorMessage || 'internal error');
+          break;
+        }
+        core.setOutput('title', result.podcastTitle);
+        core.setOutput('filename', 'tbc');
     }
 
     core.setOutput('title', time);

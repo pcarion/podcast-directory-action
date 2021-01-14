@@ -3,36 +3,56 @@ import extractRepositoryContent, { dowloadFiles } from './extractRepositoryConte
 import validatePodcastYaml from './validatePodcastYaml';
 import processUrl from './processUrl';
 
+export interface HandleIssueResponse {
+  candidateUrl: string;
+  isSuccess: boolean;
+  errorMessage?: string;
+  podcastTitle?: string;
+}
+
 export default async function handleIssuesEvent(
   octokit: Octokit,
   repoInformation: RepoInformation,
   podcastsDirectory: string,
   issueNumber: number,
   title: string,
-): Promise<FileInformation[]> {
+): Promise<HandleIssueResponse> {
   const urlCandidate = title.trim();
-  const result = await processUrl(urlCandidate, issueNumber);
-  // used by commit acction
-  // https://github.com/marketplace/actions/add-commit
-  const message = `new podcast: ${result.title} (${result.rss})`;
-  console.log(message);
+  try {
+    const result = await processUrl(urlCandidate, issueNumber);
 
-  const files = await extractRepositoryContent(octokit, repoInformation, podcastsDirectory);
+    // used by commit acction
+    // https://github.com/marketplace/actions/add-commit
+    const message = `new podcast: ${result.title} (${result.rss})`;
+    console.log(message);
 
-  // filter to get only yaml files and download their content
-  const podcastFiles = files.filter((f) => f.name.endsWith('.yaml'));
-  await dowloadFiles(podcastFiles);
+    const files = await extractRepositoryContent(octokit, repoInformation, podcastsDirectory);
 
-  console.log('Files are:', files);
+    // filter to get only yaml files and download their content
+    const podcastFiles = files.filter((f) => f.name.endsWith('.yaml'));
+    await dowloadFiles(podcastFiles);
 
-  for (const file of podcastFiles) {
-    if (!file.content) {
-      throw new Error(`missing content for file: ${file.name}`);
+    console.log('Files are:', files);
+
+    for (const file of podcastFiles) {
+      if (!file.content) {
+        throw new Error(`missing content for file: ${file.name}`);
+      }
+      const podcast = validatePodcastYaml(file.content);
+      console.log(file.name);
+      console.log(podcast);
     }
-    const podcast = validatePodcastYaml(file.content);
-    console.log(file.name);
-    console.log(podcast);
+    return {
+      candidateUrl: urlCandidate,
+      isSuccess: true,
+      errorMessage: '',
+      podcastTitle: result.title,
+    };
+  } catch (err) {
+    return {
+      candidateUrl: urlCandidate,
+      isSuccess: false,
+      errorMessage: err.message || err.toString(),
+    };
   }
-
-  return podcastFiles;
 }
