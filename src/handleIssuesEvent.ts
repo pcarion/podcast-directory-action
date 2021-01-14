@@ -1,8 +1,9 @@
+import { Podcast, Feed } from './jtd/podcast';
 import { Octokit, RepoInformation } from './types';
 import extractRepositoryContent, { dowloadFiles } from './extractRepositoryContent';
 import validatePodcastYaml from './validatePodcastYaml';
 import processUrl from './processUrl';
-import { Podcast, Feed } from './jtd/podcast';
+import addFileToRepository from './addFileToRepository';
 
 export interface HandleIssueResponse {
   candidateUrl: string;
@@ -72,6 +73,8 @@ export default async function handleIssuesEvent(
         throw new Error(`podcast already added: ${podcast.title}`);
       }
     }
+
+    await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
     return {
       candidateUrl: urlCandidate,
       isSuccess: true,
