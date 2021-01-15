@@ -78,6 +78,12 @@ export default async function handleIssuesEvent(
     }
 
     await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
+
+    reporter.info('');
+    reporter.info('The site will be regenerated automatically shortly and your submission will appear soon there');
+    reporter.info('');
+    reporter.info('Thank you for your submission!');
+
     await reporter.succeed('new podcast');
     return {
       candidateUrl: urlCandidate,
@@ -88,6 +94,12 @@ export default async function handleIssuesEvent(
     };
   } catch (err) {
     reporter.error(`processing error: ${err.message || err.toString()}`);
+    reporter.info('');
+    reporter.info('if you see an error in the URL, you can update the title of the ticket with the proper URL');
+    reporter.info('someone will review that error shortly in case that would be an nternal error');
+    reporter.info('');
+    reporter.info('Thank you for your submission!');
+
     await reporter.fail('error adding podcast');
     return {
       candidateUrl: urlCandidate,
