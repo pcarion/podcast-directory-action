@@ -73,13 +73,14 @@ export default async function handleIssuesEvent(
       console.log(podcast);
       if (checkIfDuplicatePodcast(podcast.feed, result.podcast.feed)) {
         console.log('Podcast already added:', podcast);
-        throw new Error(`podcast already added in file: \`${file.name}\``);
+        throw new Error(`podcast already added in file: \`${file.path}\``);
       }
     }
 
     await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
 
     reporter.info('');
+    reporter.info(`Your submission was successfully added in: ${result.fileName}`);
     reporter.info('The site will be regenerated automatically shortly and your submission will appear soon there');
     reporter.info('');
     reporter.info('Thank you for your submission!');
