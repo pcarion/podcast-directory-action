@@ -4,6 +4,7 @@ import extractRepositoryContent, { dowloadFiles } from './extractRepositoryConte
 import validatePodcastYaml from './validatePodcastYaml';
 import processUrl from './processUrl';
 import addFileToRepository from './addFileToRepository';
+import mkReporter from './reporter';
 
 export interface HandleIssueResponse {
   candidateUrl: string;
@@ -47,9 +48,11 @@ export default async function handleIssuesEvent(
   title: string,
 ): Promise<HandleIssueResponse> {
   const urlCandidate = title.trim();
+  const reporter = mkReporter(octokit, repoInformation.owner, repoInformation.repo, issueNumber);
+
   try {
     // process the URL to get associated podcast
-    const result = await processUrl(urlCandidate, issueNumber);
+    const result = await processUrl(urlCandidate, issueNumber, reporter);
     console.log(result.podcast);
 
     // before we can add this podcast, we need to check that this is not a duplicate
@@ -65,7 +68,7 @@ export default async function handleIssuesEvent(
       if (!file.content) {
         throw new Error(`missing content for file: ${file.name}`);
       }
-      const podcast = validatePodcastYaml(file.content);
+      const podcast = validatePodcastYaml(file.content, file.name);
       console.log(file.name);
       console.log(podcast);
       if (checkIfDuplicatePodcast(podcast.feed, result.podcast.feed)) {
@@ -75,6 +78,7 @@ export default async function handleIssuesEvent(
     }
 
     await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
+    await reporter.succeed('new podcast');
     return {
       candidateUrl: urlCandidate,
       isSuccess: true,
@@ -83,6 +87,8 @@ export default async function handleIssuesEvent(
       fileName: result.fileName,
     };
   } catch (err) {
+    reporter.error(`processing error: ${err.message || err.toString()}`);
+    await reporter.fail('error adding podcast');
     return {
       candidateUrl: urlCandidate,
       isSuccess: false,

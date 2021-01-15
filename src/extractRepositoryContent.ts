@@ -14,8 +14,13 @@ async function downloadFile(file: FileInformation): Promise<void> {
 }
 
 export async function dowloadFiles(listOfFiles: FileInformation[]): Promise<void> {
-  for (const file of listOfFiles) {
-    await downloadFile(file);
+  try {
+    for (const file of listOfFiles) {
+      await downloadFile(file);
+    }
+  } catch (err) {
+    console.log(err);
+    throw new Error('error downloading list of files from podcast repository');
   }
 }
 
@@ -61,12 +66,16 @@ export default async function extractRepositoryContent(
   info: RepoInformation,
   rootDirectory: string,
 ): Promise<FileInformation[]> {
-  console.log('Extracting repository content', { info });
-  const listOfFiles: FileInformation[] = [];
+  try {
+    console.log('Extracting repository content', { info });
+    const listOfFiles: FileInformation[] = [];
 
-  await extractFilesFromRepositoryContent(octo, listOfFiles, info, rootDirectory, '');
-  // await dowloadFiles(listOfFiles);
+    await extractFilesFromRepositoryContent(octo, listOfFiles, info, rootDirectory, '');
+    // await dowloadFiles(listOfFiles);
 
-  console.log('>extractRepositoryContent>Done');
-  return listOfFiles;
+    return listOfFiles;
+  } catch (err) {
+    console.log(err);
+    throw new Error('error retrieving existing podcasts list');
+  }
 }

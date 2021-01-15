@@ -35,20 +35,15 @@ async function run() {
     // console.log('@@ token[<]:', token.substring(token.length - 4));
     const octokit = getOctokit(token);
 
-    console.log('@@@ context:', context);
-
     const time = new Date().toTimeString();
     const podcastDirectory = 'podcasts'; // || core.getInput('podcast-yaml-directory');
-    console.log(`podcastDirectory is ${podcastDirectory}!`);
 
     const repo = getRepositoryOwner();
-    console.log('@@@ repo:', repo);
 
     const info = await getRepositoryInformation(octokit, repo.owner, repo.repo);
-    console.log('@@@ info:', info);
 
-    const payload = JSON.stringify(context.payload, undefined, 2);
-    console.log(`The event payload: ${payload}`);
+    // const payload = JSON.stringify(context.payload, undefined, 2);
+    // console.log(`The event payload: ${payload}`);
 
     switch (context.eventName) {
       case 'issues':

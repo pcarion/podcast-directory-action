@@ -2,6 +2,7 @@ import checkUrl from './checkUrl';
 
 import { Podcast, Feed } from './jtd/podcast';
 import { emptyFeed } from './empty';
+import { Reporter } from './types';
 
 import processPodcastFeed from './processPodcastFeed';
 
@@ -66,19 +67,28 @@ interface ProcessUrlResult {
   lines: string[];
 }
 
-export default async function processUrl(urlCandidate: string, issueNumber: number): Promise<ProcessUrlResult> {
+export default async function processUrl(
+  urlCandidate: string,
+  issueNumber: number,
+  reporter: Reporter,
+): Promise<ProcessUrlResult> {
   try {
+    reporter.info(`Processing podcast URL: ${urlCandidate} (issue number: ${issueNumber}`);
+
     const info = await checkInputUrl(urlCandidate);
     if (!info.isValid) {
+      reporter.error(`the podcast URL is not valid`);
       throw new Error(`invalid URL: ${urlCandidate}`);
     }
     let feed: Feed | undefined;
     if (info.isItunesUrl) {
+      reporter.info('the url is an itunes URL');
       feed = {
         ...emptyFeed,
         itunes: info.url,
       };
     } else {
+      reporter.info('the url is a RSS URL');
       feed = {
         ...emptyFeed,
         rss: info.url,
@@ -86,15 +96,20 @@ export default async function processUrl(urlCandidate: string, issueNumber: numb
     }
     if (feed) {
       const [podcast, fileName, lines] = await processPodcastFeed(feed, issueNumber);
+      reporter.info('podcast found at that URL:');
+      reporter.info(`- title: ${podcast.title}`);
+      reporter.info(`- description: ${(podcast.description || '').substring(0, 20)}...`);
       return {
         podcast,
         fileName,
         lines,
       };
     } else {
+      reporter.error('no podcast found at that URL');
       throw new Error(`no feed URL for ${info}`);
     }
   } catch (err) {
+    reporter.error('error during processing of the podcast URL');
     console.log(`Error processing: url=${urlCandidate} issueNumber=${issueNumber}:`, err);
     throw err;
   }

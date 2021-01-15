@@ -95,21 +95,26 @@ export default async function addFileToRepository(
   lines: string[],
   title: string,
 ): Promise<void> {
-  const { owner, repo, defaultBranch } = repoInformation;
-  const currentCommit = await getCurrentCommit(octo, owner, repo, defaultBranch);
-  console.log('@@ getCurrentCommit:', currentCommit);
+  try {
+    const { owner, repo, defaultBranch } = repoInformation;
+    const currentCommit = await getCurrentCommit(octo, owner, repo, defaultBranch);
+    console.log('@@ getCurrentCommit:', currentCommit);
 
-  const content = lines.join('\n');
-  const blobData = await createBlobForFile(octo, owner, repo, content);
-  const blobs: BlobInformation[] = [
-    {
-      path: fileName,
-      sha: blobData.sha,
-    },
-  ];
-  const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
-  const commitMessage = `Adding podcast: ${title}`;
-  const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
+    const content = lines.join('\n');
+    const blobData = await createBlobForFile(octo, owner, repo, content);
+    const blobs: BlobInformation[] = [
+      {
+        path: fileName,
+        sha: blobData.sha,
+      },
+    ];
+    const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
+    const commitMessage = `Adding podcast: ${title}`;
+    const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
 
-  await setBranchToCommit(octo, owner, repo, defaultBranch, newCommit.sha);
+    await setBranchToCommit(octo, owner, repo, defaultBranch, newCommit.sha);
+  } catch (err) {
+    console.log(err);
+    throw new Error(`error adding file ${fileName} to repository`);
+  }
 }

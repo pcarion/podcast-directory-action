@@ -16,3 +16,11 @@ export interface FileInformation {
   download_url: string;
   content?: string;
 }
+
+export interface Reporter {
+  info(i: string): void;
+  error(i: string): void;
+
+  succeed(label: string): Promise<void>;
+  fail(label: string): Promise<void>;
+}

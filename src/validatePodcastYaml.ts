@@ -17,14 +17,19 @@ function validateJdtSchema(content: unknown): Podcast {
   if (validationErrors.length !== 0) {
     console.log(validationErrors);
     throw new Error(
-      `cotent is not valid - ${content} - (schema validation): ${JSON.stringify(validationErrors, null, '  ')}`,
+      `content is not valid - ${content} - (schema validation): ${JSON.stringify(validationErrors, null, '  ')}`,
     );
   }
   return content as Podcast;
 }
 
-export default function validatePodcastYaml(content: string): Podcast {
-  const doc = loadYamlFile(content);
-  const descriptions = validateJdtSchema(doc);
-  return descriptions;
+export default function validatePodcastYaml(content: string, fileName: string): Podcast {
+  try {
+    const doc = loadYamlFile(content);
+    const descriptions = validateJdtSchema(doc);
+    return descriptions;
+  } catch (err) {
+    console.log(err);
+    throw new Error(`invalid podcast yaml structure for: ${fileName}`);
+  }
 }
