@@ -39,7 +39,7 @@ export default function mkReporter(octokit: Octokit, owner: string, repo: string
     },
     error(info: string) {
       _lines.push('');
-      _lines.push(`*Error*: ${info}`);
+      _lines.push(`**Error**: ${info}`);
     },
     async succeed(label: string): Promise<void> {
       if (label) {
