@@ -73,7 +73,7 @@ export default async function handleIssuesEvent(
       console.log(podcast);
       if (checkIfDuplicatePodcast(podcast.feed, result.podcast.feed)) {
         console.log('Podcast already added:', podcast);
-        throw new Error(`podcast already added: ${podcast.title} in file: ${file.name}`);
+        throw new Error(`podcast already added in file: \`${file.name}\``);
       }
     }
 
