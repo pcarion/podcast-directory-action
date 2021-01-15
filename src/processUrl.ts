@@ -82,13 +82,13 @@ export default async function processUrl(
     }
     let feed: Feed | undefined;
     if (info.isItunesUrl) {
-      reporter.info('the url is an itunes URL');
+      reporter.info('the url seems to be an itunes URL');
       feed = {
         ...emptyFeed,
         itunes: info.url,
       };
     } else {
-      reporter.info('the url is a RSS URL');
+      reporter.info('the url seems to be a RSS URL');
       feed = {
         ...emptyFeed,
         rss: info.url,
@@ -98,8 +98,8 @@ export default async function processUrl(
       const [podcast, fileName, lines] = await processPodcastFeed(feed, issueNumber);
       reporter.info('');
       reporter.info('podcast found at that URL:');
-      reporter.info(`- title: ${podcast.title}`);
-      reporter.info(`- description: ${(podcast.description || '').substring(0, 100)}...`);
+      reporter.info(`- title: \`${podcast.title}\``);
+      reporter.info(`- description: \`${(podcast.description || '').substring(0, 100)}\`...`);
       return {
         podcast,
         fileName,
