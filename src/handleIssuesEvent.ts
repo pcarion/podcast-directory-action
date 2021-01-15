@@ -80,7 +80,7 @@ export default async function handleIssuesEvent(
     await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
 
     reporter.info('');
-    reporter.info(`Your submission was successfully added in: ${result.fileName}`);
+    reporter.info(`Your submission was successfully added in: \`${result.fileName}\``);
     reporter.info('The site will be regenerated automatically shortly and your submission will appear soon there');
     reporter.info('');
     reporter.info('Thank you for your submission!');
