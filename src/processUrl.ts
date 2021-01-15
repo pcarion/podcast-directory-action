@@ -96,11 +96,10 @@ export default async function processUrl(
     }
     if (feed) {
       const [podcast, fileName, lines] = await processPodcastFeed(feed, issueNumber);
+      reporter.info('');
       reporter.info('podcast found at that URL:');
       reporter.info(`- title: ${podcast.title}`);
-      reporter.info(`- description: ${(podcast.description || '').substring(0, 20)}...`);
-      reporter.info('');
-      reporter.info('Thank you for your submission!');
+      reporter.info(`- description: ${(podcast.description || '').substring(0, 100)}...`);
       return {
         podcast,
         fileName,
@@ -112,11 +111,6 @@ export default async function processUrl(
     }
   } catch (err) {
     reporter.error('error during processing of the podcast URL');
-    reporter.info('');
-    reporter.info('if you see an error in the URL, you can update the title of the ticket with the proper URL');
-    reporter.info('someone will review that error shortly in case that would be an nternal error');
-    reporter.info('');
-    reporter.info('Thank you for your submission!');
     console.log(`Error processing: url=${urlCandidate} issueNumber=${issueNumber}:`, err);
     throw err;
   }

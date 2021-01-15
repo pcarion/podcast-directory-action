@@ -96,7 +96,7 @@ export default async function handleIssuesEvent(
     reporter.error(`processing error: ${err.message || err.toString()}`);
     reporter.info('');
     reporter.info('if you see an error in the URL, you can update the title of the ticket with the proper URL');
-    reporter.info('someone will review that error shortly in case that would be an nternal error');
+    reporter.info('someone will review that error shortly in case this is an nternal error');
     reporter.info('');
     reporter.info('Thank you for your submission!');
 
