@@ -1,0 +1,27 @@
+name: "Check PR for podcast update"
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, edited, synchronize]
+
+jobs:
+  pr_update_podcast:
+    runs-on: ubuntu-latest
+    steps:
+      - run: env
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - run: npm install
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PAT }}
+      - run: npm run dist
+        env:
+          REPO_TOKEN: ${{ secrets.GH_PAT }}
+      - run: node dist/index.js
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+

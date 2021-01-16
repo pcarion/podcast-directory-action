@@ -42,8 +42,8 @@ async function run() {
 
     const info = await getRepositoryInformation(octokit, repo.owner, repo.repo);
 
-    // const payload = JSON.stringify(context.payload, undefined, 2);
-    // console.log(`The event payload: ${payload}`);
+    const payload = JSON.stringify(context, undefined, 2);
+    console.log(`The constext is: ${payload}`);
 
     switch (context.eventName) {
       case 'issues':
