@@ -1399,7 +1399,7 @@ function run() {
                 case 0:
                     _c.trys.push([0, 7, , 8]);
                     console.log('Starting github action...');
-                    token = core.getInput('repo-token', { required: true });
+                    token = core.getInput('repo-token');
                     console.log("repo-token: " + token.substring(0.3) + "...");
                     podcastDirectory = core.getInput('podcast-yaml-directory');
                     console.log("podcastDirectory: " + podcastDirectory);
