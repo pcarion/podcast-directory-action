@@ -1393,18 +1393,15 @@ function getRepositoryOwner() {
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var token, podcastDirectory, octokit, time, repo, info, _b, issueNumber, title, result, prNumber, commitsUrl, result, error_1;
+        var token, podcastDirectory, octokit, repo, info, _b, issueNumber, title, result, prNumber, commitsUrl, result, error_1;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
                     _c.trys.push([0, 7, , 8]);
                     console.log('Starting github action...');
-                    token = core.getInput('repo-token');
-                    console.log("repo-token: " + token.substring(0.3) + "...");
+                    token = core.getInput('repo-token', { required: true });
                     podcastDirectory = core.getInput('podcast-yaml-directory');
-                    console.log("podcastDirectory: " + podcastDirectory);
                     octokit = github_1.getOctokit(token);
-                    time = new Date().toTimeString();
                     repo = getRepositoryOwner();
                     return [4 /*yield*/, getRepositoryInformation_1.getRepositoryInformation(octokit, repo.owner, repo.repo)];
                 case 1:
