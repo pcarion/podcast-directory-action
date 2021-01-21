@@ -1935,8 +1935,10 @@ var mkpid_1 = __importDefault(__nccwpck_require__(5698));
 function podcastJsonFileName(title, issueNumber) {
     var clean1 = sanitize_filename_1.default(title || 'podcast');
     var clean2 = diacritics_1.remove(clean1);
-    var clean3 = clean2.replace(/\s/g, '_').toLowerCase();
-    return clean3 + "-" + issueNumber;
+    var clean3 = clean2.trim().replace(/\s/g, '_').toLowerCase();
+    var clean4 = clean3.replace(/[^\x00-\x7F]/g, '_');
+    var clean5 = clean4.replace(/_{2,}/g, '_');
+    return clean5 + "-" + issueNumber;
 }
 function processPodcastRssUrl(rssUrl, pid) {
     return __awaiter(this, void 0, void 0, function () {

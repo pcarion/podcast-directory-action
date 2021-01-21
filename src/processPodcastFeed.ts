@@ -11,8 +11,10 @@ import mkpid from './mkpid';
 function podcastJsonFileName(title: string, issueNumber: number): string {
   const clean1 = sanitizeFileName(title || 'podcast');
   const clean2 = removeDiacritics(clean1);
-  const clean3 = clean2.replace(/\s/g, '_').toLowerCase();
-  return `${clean3}-${issueNumber}`;
+  const clean3 = clean2.trim().replace(/\s/g, '_').toLowerCase();
+  const clean4 = clean3.replace(/[^\x00-\x7F]/g, '_');
+  const clean5 = clean4.replace(/_{2,}/g, '_');
+  return `${clean5}-${issueNumber}`;
 }
 
 async function processPodcastRssUrl(rssUrl: string, pid: string): Promise<Podcast> {
