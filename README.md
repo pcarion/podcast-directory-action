@@ -1,6 +1,18 @@
 # podcast-directory-action
 Github action to maintain a directory of podcasts
 
+# release process
+
+Example for release 0.4:
+
+```
+npm run dist
+git add -A
+git commit -m 'release 0.4'
+git push
+git tag -a -m 'v0.4' v0.4
+git push --follow-tags
+```
 
 # References
 
