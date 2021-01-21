@@ -66,7 +66,7 @@ function getAttributes(element: any): any {
   return null;
 }
 
-function infoFromRss(rss: any, rssUrl: string): Podcast {
+function infoFromRss(rss: any, rssUrl: string, pid: string): Podcast {
   const channel = rss.channel && rss.channel[0];
   if (!channel) {
     throw new Error('bad rss');
@@ -102,6 +102,7 @@ function infoFromRss(rss: any, rssUrl: string): Podcast {
     title: info.title || '_',
     description: info.description || '_',
     imageUrl: info.imageUrl || '_',
+    pid,
     feed: {
       ...emptyFeed,
       rss: rssUrl,
@@ -115,7 +116,7 @@ function infoFromRss(rss: any, rssUrl: string): Podcast {
 
 // old / obsolete? format
 // http://1v5d8f8hvcfdr.blogspot.com/feeds/posts/default
-function infoFromFeed(feed: any, rssUrl: string): Podcast {
+function infoFromFeed(feed: any, rssUrl: string, pid: string): Podcast {
   const info = {
     title: '',
     author: '',
@@ -131,6 +132,7 @@ function infoFromFeed(feed: any, rssUrl: string): Podcast {
     title: info.title || '_',
     description: '_',
     imageUrl: '_',
+    pid,
     feed: {
       ...emptyFeed,
       rss: rssUrl,
@@ -153,7 +155,7 @@ function getResponseData(response: AxiosResponse<any>): string {
   return response.data as string;
 }
 
-export default async function extractPodcastInfoFromRss(rssUrl: string): Promise<Podcast> {
+export default async function extractPodcastInfoFromRss(rssUrl: string, pid: string): Promise<Podcast> {
   return new Promise((resolve, reject) => {
     axios
       .request({
@@ -169,9 +171,9 @@ export default async function extractPodcastInfoFromRss(rssUrl: string): Promise
             return reject(new Error(`error parsing xml`));
           }
           if (xml.rss) {
-            return resolve(infoFromRss(xml.rss, rssUrl));
+            return resolve(infoFromRss(xml.rss, rssUrl, pid));
           } else if (xml.feed) {
-            return resolve(infoFromFeed(xml.feed, rssUrl));
+            return resolve(infoFromFeed(xml.feed, rssUrl, pid));
           } else {
             return reject(new Error('invalid xml podcast data'));
           }

@@ -65,6 +65,8 @@ export default function writePodcastYamlFile(podcast: Podcast): string[] {
   addProp(lines, 'google', podcast.feed.google, 1);
   addProp(lines, 'castbox', podcast.feed.castbox, 1);
   addProp(lines, 'pocketcast', podcast.feed.pocketcast, 1);
+  lines.push('');
+  lines.push(`pid: ${podcast.pid} # do not change`);
 
   return lines;
 }
