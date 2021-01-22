@@ -6,5 +6,5 @@ const hashids = new Hashids('podcastfr', 6, 'abcdefghijklmnopqrstuvwxyz123456789
 
 export default function mkpid(n: number): string {
   const encoded = hashids.encode(n);
-  return encoded;
+  return `p${encoded}`;
 }

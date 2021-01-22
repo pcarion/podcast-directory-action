@@ -27,6 +27,7 @@ function getRepositoryOwner(): RepositoryOwner {
 async function run() {
   try {
     console.log('Starting github action...');
+    console.log('>env>', process.env);
     const token = core.getInput('repo-token', { required: true });
     const podcastDirectory = core.getInput('podcast-yaml-directory');
     const octokit = getOctokit(token);
