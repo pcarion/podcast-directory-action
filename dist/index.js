@@ -1401,6 +1401,7 @@ function run() {
                 case 0:
                     _c.trys.push([0, 7, , 8]);
                     console.log('Starting github action...');
+                    console.log('>env>', process.env);
                     token = core.getInput('repo-token', { required: true });
                     podcastDirectory = core.getInput('podcast-yaml-directory');
                     octokit = github_1.getOctokit(token);
@@ -1698,7 +1699,7 @@ var hashids = new hashids_1.default('podcastfr', 6, 'abcdefghijklmnopqrstuvwxyz1
 // console.log(`oncoding:${id}: ${encoded}`);
 function mkpid(n) {
     var encoded = hashids.encode(n);
-    return encoded;
+    return "p" + encoded;
 }
 exports.default = mkpid;
 
