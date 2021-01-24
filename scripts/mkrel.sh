@@ -26,6 +26,6 @@ npm run dist
 git add -A
 git commit -m "release ${newVersion}"
 git push
-git tag -a -m "${newVesrion}" ${newVesrion}
+git tag -a -m "${newVersion}" ${newVersion}
 git push --follow-tags
 
