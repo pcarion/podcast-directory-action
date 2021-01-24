@@ -1268,11 +1268,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
     return __awaiter(this, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     // update pull request if extra files were added to the branch
                     console.log("@@@ mergePullRequest>pr>" + pullRequestNumber + ">sha>" + sha);
+                    return [4 /*yield*/, octo.pulls.get({
+                            owner: owner,
+                            repo: repo,
+                            pull_number: pullRequestNumber,
+                        })];
+                case 1:
+                    res = _a.sent();
+                    console.log('@@@ octo.pulls.get>', res);
                     // await octo.pulls.updateBranch({
                     //   owner,
                     //   repo,
@@ -1285,7 +1294,7 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
-                case 1:
+                case 2:
                     // await octo.pulls.updateBranch({
                     //   owner,
                     //   repo,
@@ -1305,7 +1314,7 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                             merge_method: 'squash',
                             sha: sha,
                         })];
-                case 2:
+                case 3:
                     _a.sent();
                     return [2 /*return*/];
             }

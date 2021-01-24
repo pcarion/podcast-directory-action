@@ -9,6 +9,12 @@ export default async function mergePullRequest(
 ): Promise<void> {
   // update pull request if extra files were added to the branch
   console.log(`@@@ mergePullRequest>pr>${pullRequestNumber}>sha>${sha}`);
+  const res = await octo.pulls.get({
+    owner,
+    repo,
+    pull_number: pullRequestNumber,
+  });
+  console.log('@@@ octo.pulls.get>', res);
   // await octo.pulls.updateBranch({
   //   owner,
   //   repo,
