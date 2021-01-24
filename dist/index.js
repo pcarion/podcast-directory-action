@@ -1281,30 +1281,32 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                         })];
                 case 1:
                     res = _a.sent();
-                    console.log('@@@ octo.pulls.get>', res);
+                    console.log('@@@ octo.pulls.get>0>', res.data);
                     // await octo.pulls.updateBranch({
                     //   owner,
                     //   repo,
                     //   pull_number: pullRequestNumber,
                     //   expected_head_sha: sha,
                     // });
-                    // console.log('@@@ mergePullRequest>2');
+                    console.log('>octo.pulls.update>');
                     return [4 /*yield*/, octo.pulls.update({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
                 case 2:
-                    // await octo.pulls.updateBranch({
-                    //   owner,
-                    //   repo,
-                    //   pull_number: pullRequestNumber,
-                    //   expected_head_sha: sha,
-                    // });
-                    // console.log('@@@ mergePullRequest>2');
-                    _a.sent();
+                    res = _a.sent();
+                    console.log('>octo.pulls.update>res>', res.data);
+                    return [4 /*yield*/, octo.pulls.get({
+                            owner: owner,
+                            repo: repo,
+                            pull_number: pullRequestNumber,
+                        })];
+                case 3:
+                    res = _a.sent();
+                    console.log('>octo.pulls.get>1>', res.data);
                     // merging PR
-                    console.log('@@@ mergePullRequest>3');
+                    console.log('>octo.pulls.merge>');
                     return [4 /*yield*/, octo.pulls.merge({
                             owner: owner,
                             repo: repo,
@@ -1314,7 +1316,7 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                             merge_method: 'squash',
                             sha: sha,
                         })];
-                case 3:
+                case 4:
                     _a.sent();
                     return [2 /*return*/];
             }
