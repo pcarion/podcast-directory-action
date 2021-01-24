@@ -2483,6 +2483,13 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                     case 1:
                         // update pull request if extra files were added to the branch
                         _a.sent();
+                        return [4 /*yield*/, octokit.pulls.update({
+                                owner: owner,
+                                repo: repo,
+                                pull_number: pullRequestNumber,
+                            })];
+                    case 2:
+                        _a.sent();
                         // merging PR
                         return [4 /*yield*/, octokit.pulls.merge({
                                 owner: owner,
@@ -2492,7 +2499,7 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                                 commit_message: "merge from PR #" + pullRequestNumber,
                                 merge_method: 'squash',
                             })];
-                    case 2:
+                    case 3:
                         // merging PR
                         _a.sent();
                         return [2 /*return*/];

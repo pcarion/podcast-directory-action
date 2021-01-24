@@ -31,6 +31,11 @@ export default function mkReporter(octokit: Octokit, owner: string, repo: string
       repo,
       pull_number: pullRequestNumber,
     });
+    await octokit.pulls.update({
+      owner,
+      repo,
+      pull_number: pullRequestNumber,
+    });
     // merging PR
     await octokit.pulls.merge({
       owner,
