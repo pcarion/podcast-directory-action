@@ -1291,8 +1291,12 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                         })];
                 case 2:
                     _a.sent();
+                    // unfortunate, but seems to be required:
+                    // https://stackoverflow.com/questions/38796617/how-to-avoid-delaying-github-pull-request-merge-using-api
                     return [4 /*yield*/, sleep(5000)];
                 case 3:
+                    // unfortunate, but seems to be required:
+                    // https://stackoverflow.com/questions/38796617/how-to-avoid-delaying-github-pull-request-merge-using-api
                     _a.sent();
                     return [4 /*yield*/, octo.pulls.get({
                             owner: owner,
@@ -2590,7 +2594,6 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            console.log('@@@ setLabel...');
                             if (!label) return [3 /*break*/, 2];
                             return [4 /*yield*/, setLabel(label)];
                         case 1:

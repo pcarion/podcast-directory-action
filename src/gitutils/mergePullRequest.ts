@@ -25,6 +25,8 @@ export default async function mergePullRequest(
     repo,
     pull_number: pullRequestNumber,
   });
+  // unfortunate, but seems to be required:
+  // https://stackoverflow.com/questions/38796617/how-to-avoid-delaying-github-pull-request-merge-using-api
   await sleep(5000);
   await octo.pulls.get({
     owner,

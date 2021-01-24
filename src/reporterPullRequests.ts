@@ -33,7 +33,6 @@ export default function mkReporter(octokit: Octokit, owner: string, repo: string
       _lines.push(`**Error**: ${info}`);
     },
     async succeed(label: string): Promise<void> {
-      console.log('@@@ setLabel...');
       if (label) {
         await setLabel(label);
       }
