@@ -15,7 +15,7 @@ increment_version() {
   echo $(local IFS=$delimiter ; echo "v${array[*]}")
 }
 
-version=$(git tag | tail -1)
+version=$(git tag --sort=taggerdate | tail -1)
 newVersion=$(increment_version "$version" 1)
 
 echo "version    : ${version}"
