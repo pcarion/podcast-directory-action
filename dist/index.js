@@ -1273,21 +1273,26 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                 case 0:
                     // update pull request if extra files were added to the branch
                     console.log("@@@ mergePullRequest>pr>" + pullRequestNumber + ">sha>" + sha);
-                    return [4 /*yield*/, octo.pulls.updateBranch({
-                            owner: owner,
-                            repo: repo,
-                            pull_number: pullRequestNumber,
-                            expected_head_sha: sha,
-                        })];
-                case 1:
-                    _a.sent();
-                    console.log('@@@ mergePullRequest>2');
+                    // await octo.pulls.updateBranch({
+                    //   owner,
+                    //   repo,
+                    //   pull_number: pullRequestNumber,
+                    //   expected_head_sha: sha,
+                    // });
+                    // console.log('@@@ mergePullRequest>2');
                     return [4 /*yield*/, octo.pulls.update({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
-                case 2:
+                case 1:
+                    // await octo.pulls.updateBranch({
+                    //   owner,
+                    //   repo,
+                    //   pull_number: pullRequestNumber,
+                    //   expected_head_sha: sha,
+                    // });
+                    // console.log('@@@ mergePullRequest>2');
                     _a.sent();
                     // merging PR
                     console.log('@@@ mergePullRequest>3');
@@ -1298,8 +1303,9 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                             commit_title: "merge PR",
                             commit_message: "merge from PR #" + pullRequestNumber,
                             merge_method: 'squash',
+                            sha: sha,
                         })];
-                case 3:
+                case 2:
                     _a.sent();
                     return [2 /*return*/];
             }
