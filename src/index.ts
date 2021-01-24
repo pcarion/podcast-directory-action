@@ -79,7 +79,7 @@ async function run() {
         break;
       }
       case 'pull_request': {
-        console.log('@@@ pull_request');
+        console.log('> pull_request');
         const pullRequestBranch = process.env['GITHUB_HEAD_REF'];
         if (!pullRequestBranch) {
           core.setFailed('no GITHUB_HEAD_REF variable');
@@ -95,7 +95,7 @@ async function run() {
           core.setFailed('no number for the issue');
           break;
         }
-        console.log('@@@ PR number:', prNumber);
+        console.log('>PR number>', prNumber);
         const commitsUrl = context.payload.pull_request?.commits_url;
         if (!commitsUrl) {
           core.setFailed('no commitsUrl');

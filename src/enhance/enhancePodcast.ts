@@ -26,7 +26,7 @@ export default async function enhancePodcast(podcast: Podcast, fileName: string)
         if (err) {
           return reject(err);
         }
-        console.log(`# palette retrieved for ${podcast.imageUrl} - ${!!palette}`);
+        console.log(`>palette retrieved>image url>${podcast.imageUrl}>found>${!!palette}`);
         // console.log(palette);
         if (palette) {
           result.extra.colors.vibrant = palette.DarkMuted?.hex || null;

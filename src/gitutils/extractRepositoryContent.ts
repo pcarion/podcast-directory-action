@@ -64,7 +64,6 @@ export default async function extractRepositoryContent(
   rootDirectory: string,
 ): Promise<FileInformation[]> {
   try {
-    console.log('Extracting repository content', { info });
     const listOfFiles: FileInformation[] = [];
 
     await extractFilesFromRepositoryContent(octo, listOfFiles, info, rootDirectory, '');

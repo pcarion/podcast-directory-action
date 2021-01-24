@@ -325,7 +325,7 @@ function enhancePodcast(podcast, fileName) {
                             if (err) {
                                 return reject(err);
                             }
-                            console.log("# palette retrieved for " + podcast.imageUrl + " - " + !!palette);
+                            console.log(">palette retrieved>image url>" + podcast.imageUrl + ">found>" + !!palette);
                             // console.log(palette);
                             if (palette) {
                                 result.extra.colors.vibrant = ((_a = palette.DarkMuted) === null || _a === void 0 ? void 0 : _a.hex) || null;
@@ -886,83 +886,82 @@ function setBranchToCommit(octo, owner, repo, branch, commitSha) {
 }
 function addFilesToRepository(octo, repoInformation) {
     return __awaiter(this, void 0, void 0, function () {
-        var owner_1, repo_1, defaultBranch_1, blobs_1, currentCommit_1, err_1;
+        var owner_1, repo_1, defaultBranch_1, blobs_1;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    owner_1 = repoInformation.owner, repo_1 = repoInformation.repo, defaultBranch_1 = repoInformation.defaultBranch;
-                    blobs_1 = [];
-                    return [4 /*yield*/, getCurrentCommit(octo, owner_1, repo_1, defaultBranch_1)];
-                case 1:
-                    currentCommit_1 = _a.sent();
-                    console.log('@@ getCurrentCommit:', currentCommit_1);
-                    return [2 /*return*/, {
-                            addFileWithlines: function (fileName, lines) {
-                                return __awaiter(this, void 0, void 0, function () {
-                                    var content, blobData;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                content = lines.join('\n');
-                                                return [4 /*yield*/, createBlobForFile(octo, owner_1, repo_1, content)];
-                                            case 1:
-                                                blobData = _a.sent();
-                                                blobs_1.push({
-                                                    path: fileName,
-                                                    sha: blobData.sha,
-                                                });
-                                                return [2 /*return*/];
-                                        }
-                                    });
+            try {
+                owner_1 = repoInformation.owner, repo_1 = repoInformation.repo, defaultBranch_1 = repoInformation.defaultBranch;
+                blobs_1 = [];
+                return [2 /*return*/, {
+                        addFileWithlines: function (fileName, lines) {
+                            return __awaiter(this, void 0, void 0, function () {
+                                var content, blobData;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            content = lines.join('\n');
+                                            return [4 /*yield*/, createBlobForFile(octo, owner_1, repo_1, content)];
+                                        case 1:
+                                            blobData = _a.sent();
+                                            blobs_1.push({
+                                                path: fileName,
+                                                sha: blobData.sha,
+                                            });
+                                            return [2 /*return*/];
+                                    }
                                 });
-                            },
-                            addJsonFile: function (fileName, json) {
-                                return __awaiter(this, void 0, void 0, function () {
-                                    var content, blobData;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0:
-                                                content = JSON.stringify(json, null, 2);
-                                                return [4 /*yield*/, createBlobForFile(octo, owner_1, repo_1, content)];
-                                            case 1:
-                                                blobData = _a.sent();
-                                                blobs_1.push({
-                                                    path: fileName,
-                                                    sha: blobData.sha,
-                                                });
-                                                return [2 /*return*/];
-                                        }
-                                    });
+                            });
+                        },
+                        addJsonFile: function (fileName, json) {
+                            return __awaiter(this, void 0, void 0, function () {
+                                var content, blobData;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            content = JSON.stringify(json, null, 2);
+                                            return [4 /*yield*/, createBlobForFile(octo, owner_1, repo_1, content)];
+                                        case 1:
+                                            blobData = _a.sent();
+                                            blobs_1.push({
+                                                path: fileName,
+                                                sha: blobData.sha,
+                                            });
+                                            return [2 /*return*/];
+                                    }
                                 });
-                            },
-                            commit: function (commitMessage, branchName) {
-                                return __awaiter(this, void 0, void 0, function () {
-                                    var newTree, newCommit, commitBranchName;
-                                    return __generator(this, function (_a) {
-                                        switch (_a.label) {
-                                            case 0: return [4 /*yield*/, createNewTree(octo, owner_1, repo_1, blobs_1, currentCommit_1.treeSha)];
-                                            case 1:
-                                                newTree = _a.sent();
-                                                return [4 /*yield*/, createNewCommit(octo, owner_1, repo_1, commitMessage, newTree.sha, currentCommit_1.commitSha)];
-                                            case 2:
-                                                newCommit = _a.sent();
-                                                commitBranchName = branchName || defaultBranch_1;
-                                                return [4 /*yield*/, setBranchToCommit(octo, owner_1, repo_1, commitBranchName, newCommit.sha)];
-                                            case 3:
-                                                _a.sent();
-                                                return [2 /*return*/];
-                                        }
-                                    });
+                            });
+                        },
+                        commit: function (commitMessage, branchName) {
+                            return __awaiter(this, void 0, void 0, function () {
+                                var commitBranchName, currentCommit, newTree, newCommit;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            commitBranchName = branchName || defaultBranch_1;
+                                            return [4 /*yield*/, getCurrentCommit(octo, owner_1, repo_1, commitBranchName)];
+                                        case 1:
+                                            currentCommit = _a.sent();
+                                            console.log(">getCurrentCommit>branch>" + branchName + ">commit>", currentCommit);
+                                            return [4 /*yield*/, createNewTree(octo, owner_1, repo_1, blobs_1, currentCommit.treeSha)];
+                                        case 2:
+                                            newTree = _a.sent();
+                                            return [4 /*yield*/, createNewCommit(octo, owner_1, repo_1, commitMessage, newTree.sha, currentCommit.commitSha)];
+                                        case 3:
+                                            newCommit = _a.sent();
+                                            return [4 /*yield*/, setBranchToCommit(octo, owner_1, repo_1, commitBranchName, newCommit.sha)];
+                                        case 4:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
                                 });
-                            },
-                        }];
-                case 2:
-                    err_1 = _a.sent();
-                    console.log(err_1);
-                    throw new Error("error adding file to repository");
-                case 3: return [2 /*return*/];
+                            });
+                        },
+                    }];
             }
+            catch (err) {
+                console.log(err);
+                throw new Error("error adding file to repository");
+            }
+            return [2 /*return*/];
         });
     });
 }
@@ -1125,7 +1124,6 @@ function extractRepositoryContent(octo, info, rootDirectory) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    console.log('Extracting repository content', { info: info });
                     listOfFiles = [];
                     return [4 /*yield*/, extractFilesFromRepositoryContent(octo, listOfFiles, info, rootDirectory, '')];
                 case 1:
@@ -1641,7 +1639,7 @@ function run() {
                     core.setOutput('filename', result.fileName);
                     return [3 /*break*/, 6];
                 case 4:
-                    console.log('@@@ pull_request');
+                    console.log('> pull_request');
                     pullRequestBranch = process.env['GITHUB_HEAD_REF'];
                     if (!pullRequestBranch) {
                         core.setFailed('no GITHUB_HEAD_REF variable');
@@ -1657,7 +1655,7 @@ function run() {
                         core.setFailed('no number for the issue');
                         return [3 /*break*/, 6];
                     }
-                    console.log('@@@ PR number:', prNumber);
+                    console.log('>PR number>', prNumber);
                     commitsUrl = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.commits_url;
                     if (!commitsUrl) {
                         core.setFailed('no commitsUrl');
@@ -1865,7 +1863,6 @@ function loadExistingPodcastFiles(octokit, repoInformation, podcastsDirectory) {
                     return [4 /*yield*/, extractRepositoryContent_1.dowloadFiles(podcastFiles)];
                 case 2:
                     _a.sent();
-                    console.log('podcast files are:', files);
                     for (_i = 0, podcastFiles_1 = podcastFiles; _i < podcastFiles_1.length; _i++) {
                         file = podcastFiles_1[_i];
                         if (!file.content) {

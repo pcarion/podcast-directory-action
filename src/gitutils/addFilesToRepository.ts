@@ -102,8 +102,6 @@ export default async function addFilesToRepository(
   try {
     const { owner, repo, defaultBranch } = repoInformation;
     const blobs: BlobInformation[] = [];
-    const currentCommit = await getCurrentCommit(octo, owner, repo, defaultBranch);
-    console.log('@@ getCurrentCommit:', currentCommit);
 
     return {
       addFileWithlines: async function (fileName: string, lines: string[]): Promise<void> {
@@ -123,9 +121,12 @@ export default async function addFilesToRepository(
         });
       },
       commit: async function (commitMessage: string, branchName?: string): Promise<void> {
+        const commitBranchName = branchName || defaultBranch;
+        const currentCommit = await getCurrentCommit(octo, owner, repo, commitBranchName);
+        console.log(`>getCurrentCommit>branch>${branchName}>commit>`, currentCommit);
+
         const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
         const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
-        const commitBranchName = branchName || defaultBranch;
 
         await setBranchToCommit(octo, owner, repo, commitBranchName, newCommit.sha);
       },
