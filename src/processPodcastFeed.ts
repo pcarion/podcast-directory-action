@@ -66,7 +66,7 @@ export default async function processPodcastFeed(
     console.log(podcast);
     console.log('Generating fileName:', podcastFileName);
 
-    const fileName = `podcasts/${podcastFileName}.yaml`;
+    const fileName = `${podcastFileName}.yaml`;
     const lines = writePodcastYamlFile(podcast);
     return [podcast, fileName, lines];
   } else {

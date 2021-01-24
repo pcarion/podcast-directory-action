@@ -1,4 +1,4 @@
-import { Octokit, RepoInformation } from './types';
+import { Octokit, RepoInformation } from '../types';
 
 export async function getRepositoryInformation(octo: Octokit, owner: string, repo: string): Promise<RepoInformation> {
   try {

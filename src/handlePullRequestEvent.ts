@@ -4,7 +4,7 @@ import { Podcast } from './jtd/podcast';
 import extractFilesFromPR from './extractFilesFromPR';
 import validatePodcastYaml from './validatePodcastYaml';
 import loadExistingPodcastFiles from './loadExistingPodcastFiles';
-import checkPodcastModifications from './checkPodcastModifications';
+import checkPodcastModifications from './checks/checkPodcastModifications';
 import mkReporter from './reporterPullRequests';
 
 async function downloadFileContent(url: string): Promise<string> {
@@ -27,6 +27,7 @@ export default async function handlePullRequestEvent(
   octokit: Octokit,
   repoInformation: RepoInformation,
   podcastsDirectory: string,
+  podcastJsonDirectory: string,
   prNumber: number,
   commitsUrl: string,
 ): Promise<HandlePullRequestResponse> {

@@ -1,4 +1,4 @@
-import { Podcast, Feed } from './jtd/podcast';
+import { Podcast, Feed } from '../jtd/podcast';
 
 function checkIfDuplicatePodcast(feed1: Feed, feed2: Feed): boolean {
   function cmpUrl(url1: string, url2: string): boolean {

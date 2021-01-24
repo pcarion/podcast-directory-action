@@ -1,4 +1,4 @@
-import { Octokit, RepoInformation, FileInformation } from './types';
+import { Octokit, RepoInformation, FileInformation } from '../types';
 import axios from 'axios';
 
 async function downloadFile(file: FileInformation): Promise<void> {

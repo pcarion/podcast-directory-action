@@ -1,6 +1,6 @@
 import { Podcast } from './jtd/podcast';
 import { Octokit, RepoInformation } from './types';
-import extractRepositoryContent, { dowloadFiles } from './extractRepositoryContent';
+import extractRepositoryContent, { dowloadFiles } from './gitutils/extractRepositoryContent';
 import validatePodcastYaml from './validatePodcastYaml';
 
 export default async function loadExistingPodcastFiles(

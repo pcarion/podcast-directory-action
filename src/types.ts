@@ -1,4 +1,5 @@
 import { getOctokit } from '@actions/github';
+import { Podcast } from './jtd/podcast';
 
 export type Octokit = ReturnType<typeof getOctokit>;
 
@@ -15,6 +16,22 @@ export interface FileInformation {
   destPath: string;
   download_url: string;
   content?: string;
+}
+
+export interface PodcastEnhanced extends Podcast {
+  extra: {
+    colors: {
+      vibrant: string | null;
+      darkVibrant: string | null;
+      lightVibrant: string | null;
+      muted: string | null;
+      darkMuted: string | null;
+      lightMuted: string | null;
+    };
+    episodes: {
+      publishingDate: string;
+    }[];
+  };
 }
 
 export interface Reporter {

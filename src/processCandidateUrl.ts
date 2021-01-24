@@ -1,4 +1,4 @@
-import checkUrl from './checkUrl';
+import checkUrl from './checks/checkUrl';
 
 import { Podcast, Feed } from './jtd/podcast';
 import { emptyFeed } from './empty';

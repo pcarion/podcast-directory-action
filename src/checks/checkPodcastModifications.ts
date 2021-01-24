@@ -1,4 +1,4 @@
-import { Podcast } from './jtd/podcast';
+import { Podcast } from '../jtd/podcast';
 
 // TODO: check what change are OK and what are not
 export default async function checkPodcastModifications(before: Podcast, after: Podcast): Promise<void> {

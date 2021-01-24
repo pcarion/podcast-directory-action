@@ -1,9 +1,10 @@
 import { Podcast } from './jtd/podcast';
 import { Octokit, RepoInformation } from './types';
+import enhancePodcast from './enhance/enhancePodcast';
 import processCandidateUrl from './processCandidateUrl';
-import addFileToRepository from './addFileToRepository';
+import addFilesToRepository from './gitutils/addFilesToRepository';
 import loadExistingPodcastFiles from './loadExistingPodcastFiles';
-import checkForDuplicatePodcast from './checkForDuplicatePodcast';
+import checkForDuplicatePodcast from './checks/checkForDuplicatePodcast';
 import mkReporter from './reporterIssues';
 
 export interface HandleIssueResponse {
@@ -18,6 +19,7 @@ export default async function handleIssuesEvent(
   octokit: Octokit,
   repoInformation: RepoInformation,
   podcastsDirectory: string,
+  podcastJsonDirectory: string,
   issueNumber: number,
   title: string,
 ): Promise<HandleIssueResponse> {
@@ -35,7 +37,13 @@ export default async function handleIssuesEvent(
     // before we can add this podcast, we need to check that this is not a duplicate
     await checkForDuplicatePodcast(podcasts, result.podcast);
 
-    await addFileToRepository(octokit, repoInformation, result.fileName, result.lines, result.podcast.title);
+    const podcastEnhanced = await enhancePodcast(result.podcast, result.fileName);
+
+    const addToRepository = await addFilesToRepository(octokit, repoInformation);
+    await addToRepository.addFileWithlines(`${podcastsDirectory}/${result.fileName}`, result.lines);
+    await addToRepository.addJsonFile(`${podcastJsonDirectory}/${podcastEnhanced.pid}.json`, podcastEnhanced);
+
+    await addToRepository.commit(`adding podcast: ${podcastEnhanced.title} - ${podcastEnhanced.yamlDescriptionFile}`);
 
     reporter.info('');
     reporter.info(`Your submission was successfully added in: \`${result.fileName}\``);

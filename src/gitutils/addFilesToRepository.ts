@@ -1,4 +1,4 @@
-import { Octokit, RepoInformation } from './types';
+import { Octokit, RepoInformation } from '../types';
 
 interface BlobInformation {
   path: string;
@@ -88,33 +88,49 @@ async function setBranchToCommit(octo: Octokit, owner: string, repo: string, bra
   });
 }
 
-export default async function addFileToRepository(
+export interface AddFilesToRepositoryResult {
+  addFileWithlines: (fileName: string, lines: string[]) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addJsonFile: (fileName: string, json: any) => Promise<void>;
+  commit: (commitMessage: string) => Promise<void>;
+}
+
+export default async function addFilesToRepository(
   octo: Octokit,
   repoInformation: RepoInformation,
-  fileName: string,
-  lines: string[],
-  title: string,
-): Promise<void> {
+): Promise<AddFilesToRepositoryResult> {
   try {
     const { owner, repo, defaultBranch } = repoInformation;
+    const blobs: BlobInformation[] = [];
     const currentCommit = await getCurrentCommit(octo, owner, repo, defaultBranch);
     console.log('@@ getCurrentCommit:', currentCommit);
 
-    const content = lines.join('\n');
-    const blobData = await createBlobForFile(octo, owner, repo, content);
-    const blobs: BlobInformation[] = [
-      {
-        path: fileName,
-        sha: blobData.sha,
+    return {
+      addFileWithlines: async function (fileName: string, lines: string[]): Promise<void> {
+        const content = lines.join('\n');
+        const blobData = await createBlobForFile(octo, owner, repo, content);
+        blobs.push({
+          path: fileName,
+          sha: blobData.sha,
+        });
       },
-    ];
-    const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
-    const commitMessage = `Adding podcast: ${title}`;
-    const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
+      addJsonFile: async function (fileName: string, json: any): Promise<void> {
+        const content = JSON.stringify(json, null, 2);
+        const blobData = await createBlobForFile(octo, owner, repo, content);
+        blobs.push({
+          path: fileName,
+          sha: blobData.sha,
+        });
+      },
+      commit: async function (commitMessage: string): Promise<void> {
+        const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
+        const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
 
-    await setBranchToCommit(octo, owner, repo, defaultBranch, newCommit.sha);
+        await setBranchToCommit(octo, owner, repo, defaultBranch, newCommit.sha);
+      },
+    };
   } catch (err) {
     console.log(err);
-    throw new Error(`error adding file ${fileName} to repository`);
+    throw new Error(`error adding file to repository`);
   }
 }

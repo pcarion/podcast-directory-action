@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import { context, getOctokit } from '@actions/github';
-import { getRepositoryInformation } from './getRepositoryInformation';
+import { getRepositoryInformation } from './gitutils/getRepositoryInformation';
 import handleIssuesEvent from './handleIssuesEvent';
 import handlePullRequestEvent from './handlePullRequestEvent';
 
@@ -29,7 +29,9 @@ async function run() {
     console.log('Starting github action...');
     console.log('>env>', process.env);
     const token = core.getInput('repo-token', { required: true });
-    const podcastDirectory = core.getInput('podcast-yaml-directory');
+    const podcastYamlDirectory = core.getInput('podcast-yaml-directory');
+    const podcastJsonDirectory = core.getInput('podcast-json-directory');
+
     const octokit = getOctokit(token);
 
     const repo = getRepositoryOwner();
@@ -57,9 +59,14 @@ async function run() {
           break;
         }
 
-        const result = await handleIssuesEvent(octokit, info, podcastDirectory, issueNumber, title);
-        console.log('Result:');
-        console.log(result);
+        const result = await handleIssuesEvent(
+          octokit,
+          info,
+          podcastYamlDirectory,
+          podcastJsonDirectory,
+          issueNumber,
+          title,
+        );
         if (!result.isSuccess) {
           core.setFailed(result.errorMessage || 'internal error');
           break;
@@ -89,7 +96,14 @@ async function run() {
           core.setFailed('no commitsUrl');
           break;
         }
-        const result = await handlePullRequestEvent(octokit, info, podcastDirectory, prNumber, commitsUrl as string);
+        const result = await handlePullRequestEvent(
+          octokit,
+          info,
+          podcastYamlDirectory,
+          podcastJsonDirectory,
+          prNumber,
+          commitsUrl as string,
+        );
         console.log('Result:');
         console.log(result);
         if (!result.isSuccess) {
