@@ -3,6 +3,7 @@ import path from 'path';
 import { Octokit, RepoInformation } from './types';
 import { Podcast } from './jtd/podcast';
 import addFilesToRepository from './gitutils/addFilesToRepository';
+import mergePullRequest from './gitutils/mergePullRequest';
 import enhancePodcast from './enhance/enhancePodcast';
 import extractFilesFromPR from './extractFilesFromPR';
 import validatePodcastYaml from './validatePodcastYaml';
@@ -66,10 +67,12 @@ export default async function handlePullRequestEvent(
     const addToRepository = await addFilesToRepository(octokit, repoInformation);
     await addToRepository.addJsonFile(`${podcastJsonDirectory}/${podcastEnhanced.pid}.json`, podcastEnhanced);
 
-    await addToRepository.commit(
+    const sha = await addToRepository.commit(
       `adding podcast: ${podcastEnhanced.title} - ${podcastEnhanced.yamlDescriptionFile}`,
       pullRequestBranch,
     );
+
+    await mergePullRequest(octokit, repoInformation.owner, repoInformation.repo, prNumber, sha);
 
     await reporter.succeed('PR ok');
     return {
