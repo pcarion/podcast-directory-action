@@ -1291,7 +1291,7 @@ function handleIssuesEvent(octokit, repoInformation, podcastsDirectory, podcastJ
                     return [4 /*yield*/, processCandidateUrl_1.default(urlCandidate, issueNumber, reporter)];
                 case 2:
                     result = _a.sent();
-                    console.log(result.podcast);
+                    console.log('>podcast from canidate URL>', result.podcast);
                     return [4 /*yield*/, loadExistingPodcastFiles_1.default(octokit, repoInformation, podcastsDirectory)];
                 case 3:
                     podcasts = _a.sent();
