@@ -71,7 +71,7 @@ export default async function handlePullRequestEvent(
       pullRequestBranch,
     );
 
-    reporter.succeed('PR ok');
+    await reporter.succeed('PR ok');
     return {
       isSuccess: true,
       fileName: file.filename,

@@ -1434,7 +1434,7 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                     reporter = reporterPullRequests_1.default(octokit, repoInformation.owner, repoInformation.repo, prNumber);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 10, , 12]);
+                    _a.trys.push([1, 11, , 13]);
                     return [4 /*yield*/, extractFilesFromPR_1.default(octokit, commitsUrl)];
                 case 2:
                     files = _a.sent();
@@ -1472,13 +1472,15 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                     return [4 /*yield*/, addToRepository.commit("adding podcast: " + podcastEnhanced.title + " - " + podcastEnhanced.yamlDescriptionFile, pullRequestBranch)];
                 case 9:
                     _a.sent();
-                    reporter.succeed('PR ok');
+                    return [4 /*yield*/, reporter.succeed('PR ok')];
+                case 10:
+                    _a.sent();
                     return [2 /*return*/, {
                             isSuccess: true,
                             fileName: file_1.filename,
                             podcast: podcast,
                         }];
-                case 10:
+                case 11:
                     err_1 = _a.sent();
                     reporter.error("processing error: " + (err_1.message || err_1.toString()));
                     reporter.info('');
@@ -1487,13 +1489,13 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                     reporter.info('');
                     reporter.info('Thank you for your submission!');
                     return [4 /*yield*/, reporter.fail('error processing PR')];
-                case 11:
+                case 12:
                     _a.sent();
                     return [2 /*return*/, {
                             isSuccess: false,
                             errorMessage: err_1.message || err_1.toString(),
                         }];
-                case 12: return [2 /*return*/];
+                case 13: return [2 /*return*/];
             }
         });
     });
@@ -1664,13 +1666,15 @@ function run() {
                     return [4 /*yield*/, handlePullRequestEvent_1.default(octokit, info, podcastYamlDirectory, podcastJsonDirectory, prNumber, commitsUrl, pullRequestBranch)];
                 case 5:
                     result = _c.sent();
-                    console.log('Result:');
-                    console.log(result);
                     if (!result.isSuccess) {
+                        console.log('Result:');
+                        console.log(result);
                         core.setFailed(result.errorMessage || 'internal error');
                         return [3 /*break*/, 6];
                     }
                     if (!result.podcast) {
+                        console.log('Result:');
+                        console.log(result);
                         core.setFailed('internal error -- missing podcast information');
                         return [3 /*break*/, 6];
                     }
@@ -2473,16 +2477,17 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: 
-                    // update pull request if extra files were added to the branch
-                    return [4 /*yield*/, octokit.pulls.updateBranch({
-                            owner: owner,
-                            repo: repo,
-                            pull_number: pullRequestNumber,
-                        })];
-                    case 1:
+                    case 0:
                         // update pull request if extra files were added to the branch
+                        console.log('@@@ mergePullRequest>1', pullRequestNumber);
+                        return [4 /*yield*/, octokit.pulls.updateBranch({
+                                owner: owner,
+                                repo: repo,
+                                pull_number: pullRequestNumber,
+                            })];
+                    case 1:
                         _a.sent();
+                        console.log('@@@ mergePullRequest>2');
                         return [4 /*yield*/, octokit.pulls.update({
                                 owner: owner,
                                 repo: repo,
@@ -2491,6 +2496,7 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                     case 2:
                         _a.sent();
                         // merging PR
+                        console.log('@@@ mergePullRequest>3');
                         return [4 /*yield*/, octokit.pulls.merge({
                                 owner: owner,
                                 repo: repo,
@@ -2500,7 +2506,6 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                                 merge_method: 'squash',
                             })];
                     case 3:
-                        // merging PR
                         _a.sent();
                         return [2 /*return*/];
                 }
@@ -2520,16 +2525,17 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
+                            console.log('@@@ setLabel...');
                             if (!label) return [3 /*break*/, 2];
                             return [4 /*yield*/, setLabel(label)];
                         case 1:
                             _a.sent();
                             _a.label = 2;
-                        case 2: 
-                        // await writeComment();
-                        return [4 /*yield*/, mergePullRequest()];
-                        case 3:
+                        case 2:
                             // await writeComment();
+                            console.log('@@@ mergePullRequest...');
+                            return [4 /*yield*/, mergePullRequest()];
+                        case 3:
                             _a.sent();
                             return [2 /*return*/];
                     }

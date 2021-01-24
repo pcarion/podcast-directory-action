@@ -110,13 +110,15 @@ async function run() {
           commitsUrl as string,
           pullRequestBranch,
         );
-        console.log('Result:');
-        console.log(result);
         if (!result.isSuccess) {
+          console.log('Result:');
+          console.log(result);
           core.setFailed(result.errorMessage || 'internal error');
           break;
         }
         if (!result.podcast) {
+          console.log('Result:');
+          console.log(result);
           core.setFailed('internal error -- missing podcast information');
           break;
         }
