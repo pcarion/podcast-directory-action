@@ -60,8 +60,9 @@ export default async function handlePullRequestEvent(
 
     const podcastEnhanced = await enhancePodcast(podcast, path.basename(file.filename));
 
-    // console.log(`@@@ before:${JSON.stringify(originalPodcast, null, 2)}`);
-    // console.log(`@@@ after:${JSON.stringify(podcast, null, 2)}`);
+    // we check if the change are OK
+    await checkPodcastModifications(originalPodcast, podcast);
+
     const addToRepository = await addFilesToRepository(octokit, repoInformation);
     await addToRepository.addJsonFile(`${podcastJsonDirectory}/${podcastEnhanced.pid}.json`, podcastEnhanced);
 
@@ -69,9 +70,6 @@ export default async function handlePullRequestEvent(
       `adding podcast: ${podcastEnhanced.title} - ${podcastEnhanced.yamlDescriptionFile}`,
       pullRequestBranch,
     );
-
-    // we check if the change are OK
-    await checkPodcastModifications(originalPodcast, podcast);
 
     reporter.succeed('PR ok');
     return {

@@ -1458,19 +1458,19 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                     return [4 /*yield*/, enhancePodcast_1.default(podcast, path_1.default.basename(file_1.filename))];
                 case 5:
                     podcastEnhanced = _a.sent();
-                    return [4 /*yield*/, addFilesToRepository_1.default(octokit, repoInformation)];
-                case 6:
-                    addToRepository = _a.sent();
-                    return [4 /*yield*/, addToRepository.addJsonFile(podcastJsonDirectory + "/" + podcastEnhanced.pid + ".json", podcastEnhanced)];
-                case 7:
-                    _a.sent();
-                    return [4 /*yield*/, addToRepository.commit("adding podcast: " + podcastEnhanced.title + " - " + podcastEnhanced.yamlDescriptionFile, pullRequestBranch)];
-                case 8:
-                    _a.sent();
                     // we check if the change are OK
                     return [4 /*yield*/, checkPodcastModifications_1.default(originalPodcast, podcast)];
-                case 9:
+                case 6:
                     // we check if the change are OK
+                    _a.sent();
+                    return [4 /*yield*/, addFilesToRepository_1.default(octokit, repoInformation)];
+                case 7:
+                    addToRepository = _a.sent();
+                    return [4 /*yield*/, addToRepository.addJsonFile(podcastJsonDirectory + "/" + podcastEnhanced.pid + ".json", podcastEnhanced)];
+                case 8:
+                    _a.sent();
+                    return [4 /*yield*/, addToRepository.commit("adding podcast: " + podcastEnhanced.title + " - " + podcastEnhanced.yamlDescriptionFile, pullRequestBranch)];
+                case 9:
                     _a.sent();
                     reporter.succeed('PR ok');
                     return [2 /*return*/, {
@@ -2474,16 +2474,25 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: 
-                    // merging PR
-                    return [4 /*yield*/, octokit.pulls.merge({
+                    // update pull request if extra files were added to the branch
+                    return [4 /*yield*/, octokit.pulls.updateBranch({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
-                            commit_title: "merge PR",
-                            commit_message: "merge from PR #" + pullRequestNumber,
-                            merge_method: 'squash',
                         })];
                     case 1:
+                        // update pull request if extra files were added to the branch
+                        _a.sent();
+                        // merging PR
+                        return [4 /*yield*/, octokit.pulls.merge({
+                                owner: owner,
+                                repo: repo,
+                                pull_number: pullRequestNumber,
+                                commit_title: "merge PR",
+                                commit_message: "merge from PR #" + pullRequestNumber,
+                                merge_method: 'squash',
+                            })];
+                    case 2:
                         // merging PR
                         _a.sent();
                         return [2 /*return*/];

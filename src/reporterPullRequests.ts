@@ -25,6 +25,12 @@ export default function mkReporter(octokit: Octokit, owner: string, repo: string
   }
 
   async function mergePullRequest() {
+    // update pull request if extra files were added to the branch
+    await octokit.pulls.updateBranch({
+      owner,
+      repo,
+      pull_number: pullRequestNumber,
+    });
     // merging PR
     await octokit.pulls.merge({
       owner,
