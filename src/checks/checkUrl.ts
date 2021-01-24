@@ -8,7 +8,6 @@ export default async function checkUrl(url: string): Promise<string> {
       url: url,
     })
       .then((response) => {
-        console.log('response...:', response.request.res.responseUrl);
         return resolve(response.request.res.responseUrl);
       })
       .catch((err) => {

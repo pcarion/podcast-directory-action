@@ -32,6 +32,7 @@ export default function mkReporter(octokit: Octokit, owner: string, repo: string
       pull_number: pullRequestNumber,
       commit_title: `merge PR`,
       commit_message: `merge from PR #${pullRequestNumber}`,
+      merge_method: 'squash',
     });
   }
 

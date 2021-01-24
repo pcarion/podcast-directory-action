@@ -92,7 +92,7 @@ export interface AddFilesToRepositoryResult {
   addFileWithlines: (fileName: string, lines: string[]) => Promise<void>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addJsonFile: (fileName: string, json: any) => Promise<void>;
-  commit: (commitMessage: string) => Promise<void>;
+  commit: (commitMessage: string, branchName?: string) => Promise<void>;
 }
 
 export default async function addFilesToRepository(
@@ -122,11 +122,12 @@ export default async function addFilesToRepository(
           sha: blobData.sha,
         });
       },
-      commit: async function (commitMessage: string): Promise<void> {
+      commit: async function (commitMessage: string, branchName?: string): Promise<void> {
         const newTree = await createNewTree(octo, owner, repo, blobs, currentCommit.treeSha);
         const newCommit = await createNewCommit(octo, owner, repo, commitMessage, newTree.sha, currentCommit.commitSha);
+        const commitBranchName = branchName || defaultBranch;
 
-        await setBranchToCommit(octo, owner, repo, defaultBranch, newCommit.sha);
+        await setBranchToCommit(octo, owner, repo, commitBranchName, newCommit.sha);
       },
     };
   } catch (err) {

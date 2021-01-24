@@ -203,7 +203,6 @@ function checkUrl(url) {
                         url: url,
                     })
                         .then(function (response) {
-                        console.log('response...:', response.request.res.responseUrl);
                         return resolve(response.request.res.responseUrl);
                     })
                         .catch(function (err) {
@@ -937,9 +936,9 @@ function addFilesToRepository(octo, repoInformation) {
                                     });
                                 });
                             },
-                            commit: function (commitMessage) {
+                            commit: function (commitMessage, branchName) {
                                 return __awaiter(this, void 0, void 0, function () {
-                                    var newTree, newCommit;
+                                    var newTree, newCommit, commitBranchName;
                                     return __generator(this, function (_a) {
                                         switch (_a.label) {
                                             case 0: return [4 /*yield*/, createNewTree(octo, owner_1, repo_1, blobs_1, currentCommit_1.treeSha)];
@@ -948,7 +947,8 @@ function addFilesToRepository(octo, repoInformation) {
                                                 return [4 /*yield*/, createNewCommit(octo, owner_1, repo_1, commitMessage, newTree.sha, currentCommit_1.commitSha)];
                                             case 2:
                                                 newCommit = _a.sent();
-                                                return [4 /*yield*/, setBranchToCommit(octo, owner_1, repo_1, defaultBranch_1, newCommit.sha)];
+                                                commitBranchName = branchName || defaultBranch_1;
+                                                return [4 /*yield*/, setBranchToCommit(octo, owner_1, repo_1, commitBranchName, newCommit.sha)];
                                             case 3:
                                                 _a.sent();
                                                 return [2 /*return*/];
@@ -1291,7 +1291,7 @@ function handleIssuesEvent(octokit, repoInformation, podcastsDirectory, podcastJ
                     return [4 /*yield*/, processCandidateUrl_1.default(urlCandidate, issueNumber, reporter)];
                 case 2:
                     result = _a.sent();
-                    console.log('>podcast from canidate URL>', result.podcast);
+                    console.log('>podcast from candidate URL>', result.podcast);
                     return [4 /*yield*/, loadExistingPodcastFiles_1.default(octokit, repoInformation, podcastsDirectory)];
                 case 3:
                     podcasts = _a.sent();
@@ -1402,6 +1402,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 var axios_1 = __importDefault(__nccwpck_require__(6545));
+var path_1 = __importDefault(__nccwpck_require__(5622));
+var addFilesToRepository_1 = __importDefault(__nccwpck_require__(4436));
+var enhancePodcast_1 = __importDefault(__nccwpck_require__(5764));
 var extractFilesFromPR_1 = __importDefault(__nccwpck_require__(5767));
 var validatePodcastYaml_1 = __importDefault(__nccwpck_require__(1882));
 var loadExistingPodcastFiles_1 = __importDefault(__nccwpck_require__(7074));
@@ -1424,16 +1427,16 @@ function downloadFileContent(url) {
         });
     });
 }
-function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, podcastJsonDirectory, prNumber, commitsUrl) {
+function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, podcastJsonDirectory, prNumber, commitsUrl, pullRequestBranch) {
     return __awaiter(this, void 0, void 0, function () {
-        var reporter, files, file_1, existingPodcasts, originalPodcast, content, podcast, err_1;
+        var reporter, files, file_1, existingPodcasts, originalPodcast, content, podcast, podcastEnhanced, addToRepository, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     reporter = reporterPullRequests_1.default(octokit, repoInformation.owner, repoInformation.repo, prNumber);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, , 8]);
+                    _a.trys.push([1, 10, , 12]);
                     return [4 /*yield*/, extractFilesFromPR_1.default(octokit, commitsUrl)];
                 case 2:
                     files = _a.sent();
@@ -1454,13 +1457,21 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                 case 4:
                     content = _a.sent();
                     podcast = validatePodcastYaml_1.default(content, file_1.filename);
-                    // console.log(`@@@ before:${JSON.stringify(originalPodcast, null, 2)}`);
-                    // console.log(`@@@ after:${JSON.stringify(podcast, null, 2)}`);
+                    return [4 /*yield*/, enhancePodcast_1.default(podcast, path_1.default.basename(file_1.filename))];
+                case 5:
+                    podcastEnhanced = _a.sent();
+                    return [4 /*yield*/, addFilesToRepository_1.default(octokit, repoInformation)];
+                case 6:
+                    addToRepository = _a.sent();
+                    return [4 /*yield*/, addToRepository.addJsonFile(podcastJsonDirectory + "/" + podcastEnhanced.pid + ".json", podcastEnhanced)];
+                case 7:
+                    _a.sent();
+                    return [4 /*yield*/, addToRepository.commit("adding podcast: " + podcastEnhanced.title + " - " + podcastEnhanced.yamlDescriptionFile, pullRequestBranch)];
+                case 8:
+                    _a.sent();
                     // we check if the change are OK
                     return [4 /*yield*/, checkPodcastModifications_1.default(originalPodcast, podcast)];
-                case 5:
-                    // console.log(`@@@ before:${JSON.stringify(originalPodcast, null, 2)}`);
-                    // console.log(`@@@ after:${JSON.stringify(podcast, null, 2)}`);
+                case 9:
                     // we check if the change are OK
                     _a.sent();
                     reporter.succeed('PR ok');
@@ -1469,7 +1480,7 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                             fileName: file_1.filename,
                             podcast: podcast,
                         }];
-                case 6:
+                case 10:
                     err_1 = _a.sent();
                     reporter.error("processing error: " + (err_1.message || err_1.toString()));
                     reporter.info('');
@@ -1478,13 +1489,13 @@ function handlePullRequestEvent(octokit, repoInformation, podcastsDirectory, pod
                     reporter.info('');
                     reporter.info('Thank you for your submission!');
                     return [4 /*yield*/, reporter.fail('error processing PR')];
-                case 7:
+                case 11:
                     _a.sent();
                     return [2 /*return*/, {
                             isSuccess: false,
                             errorMessage: err_1.message || err_1.toString(),
                         }];
-                case 8: return [2 /*return*/];
+                case 12: return [2 /*return*/];
             }
         });
     });
@@ -1580,13 +1591,12 @@ function getRepositoryOwner() {
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
-        var token, podcastYamlDirectory, podcastJsonDirectory, octokit, repo, info, _b, issueNumber, title, result, prNumber, commitsUrl, result, error_1;
+        var token, podcastYamlDirectory, podcastJsonDirectory, octokit, repo, info, _b, issueNumber, title, result, pullRequestBranch, prNumber, commitsUrl, result, error_1;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
                     _c.trys.push([0, 7, , 8]);
                     console.log('Starting github action...');
-                    console.log('>env>', process.env);
                     token = core.getInput('repo-token', { required: true });
                     podcastYamlDirectory = core.getInput('podcast-yaml-directory');
                     podcastJsonDirectory = core.getInput('podcast-json-directory');
@@ -1632,6 +1642,12 @@ function run() {
                     return [3 /*break*/, 6];
                 case 4:
                     console.log('@@@ pull_request');
+                    pullRequestBranch = process.env['GITHUB_HEAD_REF'];
+                    if (!pullRequestBranch) {
+                        core.setFailed('no GITHUB_HEAD_REF variable');
+                        return [3 /*break*/, 6];
+                    }
+                    console.log(">pullRequestBranch>" + pullRequestBranch);
                     if (!github_1.context.payload.pull_request) {
                         core.setFailed('no pull_request payload');
                         return [3 /*break*/, 6];
@@ -1647,7 +1663,7 @@ function run() {
                         core.setFailed('no commitsUrl');
                         return [3 /*break*/, 6];
                     }
-                    return [4 /*yield*/, handlePullRequestEvent_1.default(octokit, info, podcastYamlDirectory, podcastJsonDirectory, prNumber, commitsUrl)];
+                    return [4 /*yield*/, handlePullRequestEvent_1.default(octokit, info, podcastYamlDirectory, podcastJsonDirectory, prNumber, commitsUrl, pullRequestBranch)];
                 case 5:
                     result = _c.sent();
                     console.log('Result:');
@@ -2468,6 +2484,7 @@ function mkReporter(octokit, owner, repo, pullRequestNumber) {
                             pull_number: pullRequestNumber,
                             commit_title: "merge PR",
                             commit_message: "merge from PR #" + pullRequestNumber,
+                            merge_method: 'squash',
                         })];
                     case 1:
                         // merging PR

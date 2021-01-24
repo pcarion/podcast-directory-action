@@ -27,7 +27,6 @@ function getRepositoryOwner(): RepositoryOwner {
 async function run() {
   try {
     console.log('Starting github action...');
-    console.log('>env>', process.env);
     const token = core.getInput('repo-token', { required: true });
     const podcastYamlDirectory = core.getInput('podcast-yaml-directory');
     const podcastJsonDirectory = core.getInput('podcast-json-directory');
@@ -81,6 +80,12 @@ async function run() {
       }
       case 'pull_request': {
         console.log('@@@ pull_request');
+        const pullRequestBranch = process.env['GITHUB_HEAD_REF'];
+        if (!pullRequestBranch) {
+          core.setFailed('no GITHUB_HEAD_REF variable');
+          break;
+        }
+        console.log(`>pullRequestBranch>${pullRequestBranch}`);
         if (!context.payload.pull_request) {
           core.setFailed('no pull_request payload');
           break;
@@ -103,6 +108,7 @@ async function run() {
           podcastJsonDirectory,
           prNumber,
           commitsUrl as string,
+          pullRequestBranch,
         );
         console.log('Result:');
         console.log(result);

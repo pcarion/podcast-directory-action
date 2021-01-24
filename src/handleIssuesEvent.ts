@@ -29,7 +29,7 @@ export default async function handleIssuesEvent(
   try {
     // process the URL to get associated podcast
     const result = await processCandidateUrl(urlCandidate, issueNumber, reporter);
-    console.log('>podcast from canidate URL>', result.podcast);
+    console.log('>podcast from candidate URL>', result.podcast);
 
     // load existing podcasts
     const podcasts = await loadExistingPodcastFiles(octokit, repoInformation, podcastsDirectory);

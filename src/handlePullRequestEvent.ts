@@ -1,6 +1,9 @@
 import axios from 'axios';
+import path from 'path';
 import { Octokit, RepoInformation } from './types';
 import { Podcast } from './jtd/podcast';
+import addFilesToRepository from './gitutils/addFilesToRepository';
+import enhancePodcast from './enhance/enhancePodcast';
 import extractFilesFromPR from './extractFilesFromPR';
 import validatePodcastYaml from './validatePodcastYaml';
 import loadExistingPodcastFiles from './loadExistingPodcastFiles';
@@ -30,6 +33,7 @@ export default async function handlePullRequestEvent(
   podcastJsonDirectory: string,
   prNumber: number,
   commitsUrl: string,
+  pullRequestBranch: string,
 ): Promise<HandlePullRequestResponse> {
   const reporter = mkReporter(octokit, repoInformation.owner, repoInformation.repo, prNumber);
 
@@ -54,8 +58,17 @@ export default async function handlePullRequestEvent(
     const content = await downloadFileContent(file.url);
     const podcast = validatePodcastYaml(content, file.filename);
 
+    const podcastEnhanced = await enhancePodcast(podcast, path.basename(file.filename));
+
     // console.log(`@@@ before:${JSON.stringify(originalPodcast, null, 2)}`);
     // console.log(`@@@ after:${JSON.stringify(podcast, null, 2)}`);
+    const addToRepository = await addFilesToRepository(octokit, repoInformation);
+    await addToRepository.addJsonFile(`${podcastJsonDirectory}/${podcastEnhanced.pid}.json`, podcastEnhanced);
+
+    await addToRepository.commit(
+      `adding podcast: ${podcastEnhanced.title} - ${podcastEnhanced.yamlDescriptionFile}`,
+      pullRequestBranch,
+    );
 
     // we check if the change are OK
     await checkPodcastModifications(originalPodcast, podcast);
