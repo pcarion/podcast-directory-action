@@ -1070,17 +1070,12 @@ function extractFilesFromRepositoryContent(octo, listOfFiles, info, path, rootPa
         var content, templateFiles, _i, templateFiles_1, file;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    console.log('@@ extractFilesFromRepositoryContent', {
-                        info: info,
+                case 0: return [4 /*yield*/, octo.repos.getContent({
+                        owner: info.owner,
+                        repo: info.repo,
                         path: path,
-                    });
-                    return [4 /*yield*/, octo.repos.getContent({
-                            owner: info.owner,
-                            repo: info.repo,
-                            path: path,
-                            ref: info.defaultBranch,
-                        })];
+                        ref: info.defaultBranch,
+                    })];
                 case 1:
                     content = _a.sent();
                     if (!content.data || !Array.isArray(content.data)) {
@@ -1266,47 +1261,47 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+function sleep(ms) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, new Promise(function (resolve) {
+                    setTimeout(function () { return resolve(); }, ms);
+                })];
+        });
+    });
+}
 function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
     return __awaiter(this, void 0, void 0, function () {
-        var res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     // update pull request if extra files were added to the branch
-                    console.log("@@@ mergePullRequest>pr>" + pullRequestNumber + ">sha>" + sha);
+                    console.log(">mergePullRequest>pr>" + pullRequestNumber + ">sha>" + sha);
                     return [4 /*yield*/, octo.pulls.get({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
                 case 1:
-                    res = _a.sent();
-                    console.log('@@@ octo.pulls.get>0>', res.data);
-                    // await octo.pulls.updateBranch({
-                    //   owner,
-                    //   repo,
-                    //   pull_number: pullRequestNumber,
-                    //   expected_head_sha: sha,
-                    // });
-                    console.log('>octo.pulls.update>');
+                    _a.sent();
                     return [4 /*yield*/, octo.pulls.update({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
                 case 2:
-                    res = _a.sent();
-                    console.log('>octo.pulls.update>res>', res.data);
+                    _a.sent();
+                    return [4 /*yield*/, sleep(5000)];
+                case 3:
+                    _a.sent();
                     return [4 /*yield*/, octo.pulls.get({
                             owner: owner,
                             repo: repo,
                             pull_number: pullRequestNumber,
                         })];
-                case 3:
-                    res = _a.sent();
-                    console.log('>octo.pulls.get>1>', res.data);
+                case 4:
+                    _a.sent();
                     // merging PR
-                    console.log('>octo.pulls.merge>');
                     return [4 /*yield*/, octo.pulls.merge({
                             owner: owner,
                             repo: repo,
@@ -1316,7 +1311,8 @@ function mergePullRequest(octo, owner, repo, pullRequestNumber, sha) {
                             merge_method: 'squash',
                             sha: sha,
                         })];
-                case 4:
+                case 5:
+                    // merging PR
                     _a.sent();
                     return [2 /*return*/];
             }

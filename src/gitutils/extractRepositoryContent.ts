@@ -28,10 +28,6 @@ async function extractFilesFromRepositoryContent(
   path: string,
   rootPath: string,
 ): Promise<void> {
-  console.log('@@ extractFilesFromRepositoryContent', {
-    info: info,
-    path: path,
-  });
   const content = await octo.repos.getContent({
     owner: info.owner,
     repo: info.repo,
